@@ -1,5 +1,5 @@
 # Radix-2 FFT
-Small library for in-place bit reversed DIT DFT radix-2 FFT. Functions are provided for 1D and 2D FFTs as well as fftshift and fftshift2 which rearrages the components to place the 0 frequency term in the centre.
+Small library for in-place bit reversed DIT DFT radix-2 FFT. Functions are provided for 1D and 2D FFTs as well as fftshift and fftshift2 which rearranges the components to place the 0 frequency term in the centre.
 
 ## FFT/iFFT
 An example using the 1D transform is as follows:

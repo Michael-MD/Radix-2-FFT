@@ -1,8 +1,5 @@
-#include <cmath>
+#include <math.h>
 #define TWOPI 2*acos(-1)
-
-#include <iostream>
-using namespace std;
 
 float Er, Ei, Or, Oi, coswk, sinwk;
 float eOr, eOi;

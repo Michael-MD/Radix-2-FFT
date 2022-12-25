@@ -1,5 +1,8 @@
-a.out: test.o fft1.o fft2.o
-	g++ test.o fft1.o fft2.o -o a.out
+a.out: test.o fft1.o fft2.o fftshift.o
+	g++ test.o fft1.o fft2.o fftshift.o -o a.out
+
+fftshift.o: fftshift.c fft.h
+	g++ -c fftshift.c -o fftshift.o
 
 fft2.o: rad2FFT2.c fft.h
 	g++ -c rad2FFT2.c -o fft2.o

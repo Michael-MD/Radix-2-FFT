@@ -8,16 +8,55 @@ float Er, Ei, Or, Oi, coswk, sinwk;
 float eOr, eOi;
 int l;
 
+#define complexMult(cr, ci, ar, ai, br, bi) { \
+	cr = ar * br - ai * bi;					\
+	ci = ar * bi + ai * br;					\
+}
+
+unsigned int ReverseBits(unsigned int i, int s) {
+	 int rev = 0;
+    // traversing bits of 'num' from the right 
+    while (s--)
+    { 
+        rev <<= 1;
+        if (i & 1 == 1) 
+            rev ^= 1;
+        i >>= 1;
+    }
+
+    return rev;
+}
+
+void bitReversedShuffle(float xr[], float xi[], int N, int s) {
+	float tmp;
+	unsigned int j;
+	for (unsigned int i = 0; i < N; i++) {
+		j = ReverseBits(i, s);
+
+		if ( i < j ) {
+			tmp = xr[j];
+			xr[j] = xr[i];
+			xr[i] = tmp;
+
+			tmp = xi[j];
+			xi[j] = xi[i];
+			xi[i] = tmp;
+		}
+	}
+}
 
 void rad2FFT(float xr[], float xi[], unsigned int N) {
 	unsigned short log2N = 0;
 	unsigned int m, m2;
 	float w, wr, wi, wm, wmr, wmi;
-	float temp;
+	float tmp;
 	int p, l;
 
-	for ( unsigned int j = N; (j = j >> 1) >= 1; log2N++ );
 
+	// finding power of length
+	for ( unsigned int j = N; (j = j >> 1) >= 1; log2N++ );
+	
+	bitReversedShuffle(xr, xi, N, log2N);
 	for ( unsigned short s = 0; s < log2N; s++ )
 	{
 		m = 2 << s;
@@ -37,8 +76,7 @@ void rad2FFT(float xr[], float xi[], unsigned int N) {
 				Or = xr[k + j + m2];
 				Oi = xi[k + j + m2];
 
-				eOr = wr * Or - wi * Oi;
-				eOi = wr * Oi + wi * Or;
+				complexMult(eOr, eOi, wr, wi, Or, Oi)
 
 				l = k + j;
 				xr[l] = Er + eOr;
@@ -48,9 +86,8 @@ void rad2FFT(float xr[], float xi[], unsigned int N) {
 				xr[p] = Er - eOr;
 				xi[p] = Ei - eOi;
 
-				temp = wr;
-				wr = wr * wmr - wi * wmi;
-				wi = temp * wmi + wi * wmr;
+				complexMult(tmp, wi, wr, wi, wmr, wmi)
+				wr = tmp;
 
 			}
 		}
@@ -58,4 +95,17 @@ void rad2FFT(float xr[], float xi[], unsigned int N) {
 	}
 	
 
+}
+
+void irad2FFT(float Xr[], float Xi[], unsigned int N) {
+	// conjugate
+	for ( int i = 0; i < N; i++ ) Xi[i] *= -1;
+	rad2FFT(Xr, Xi, N);
+	// conjugate
+	for ( int i = 0; i < N; i++ ) Xi[i] *= -1;
+	// normalize
+	for ( int i = 0; i < N; i++ ) {
+		Xr[i] /= N;
+		Xi[i] /= N;
+	}
 }
